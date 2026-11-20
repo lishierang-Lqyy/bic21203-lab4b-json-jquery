@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 4b - Question 2: Books JSON</title>
+</head>
+<body>
+  <h1>Book Details</h1>
+  <div id="output"></div>
+  <p id="errorMessage" role="alert" style="color: red;"></p>
+
+  <script>
+    async function loadBooks() {
+      const outputDiv = document.getElementById("output");
+      const errorParagraph = document.getElementById("errorMessage");
+
+      try {
+        const response = await fetch("books.json");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const books = data.books;
+
+        if (!Array.isArray(books) || books.length < 2) {
+          throw new Error("Invalid JSON structure.");
+        }
+
+        // (a) Title of the first book
+        const firstTitle = document.createElement("p");
+        firstTitle.textContent = `First Book Title: ${books[0].title}`;
+        outputDiv.appendChild(firstTitle);
+
+        // (b) Author of the second book
+        const secondAuthor = document.createElement("p");
+        secondAuthor.textContent = `Second Book Author: ${books[1].author}`;
+        outputDiv.appendChild(secondAuthor);
+
+        // (c) Genres of both books, clearly grouped by book title
+        const genresHeading = document.createElement("h2");
+        genresHeading.textContent = "Genres by Book";
+        outputDiv.appendChild(genresHeading);
+
+        const genreList = document.createElement("ul");
+        books.forEach((book) => {
+          const li = document.createElement("li");
+          li.textContent = `${book.title} — ${book.genres.join(", ")}`;
+          genreList.appendChild(li);
+        });
+        outputDiv.appendChild(genreList);
+
+      } catch (error) {
+        errorParagraph.textContent = "Failed to load book data. Please check that books.json exists, is valid JSON, and is served via a local web server.";
+      }
+    }
+
+    loadBooks();
+  </script>
+</body>
+</html>
